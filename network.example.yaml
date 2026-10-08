@@ -1,0 +1,58 @@
+# Drunix generic network definition.
+# Create it with `./drunix-net.sh init` (interactive) or copy this file to
+# network.yaml and edit. Changing the structure never requires code changes:
+# edit this file, then run `./drunix-net.sh generate`.
+
+network:
+  name: drunix                    # prefix for docker network / volumes / compose project
+  domain: example.io              # base domain; org domains become <org>.<domain>
+  mode: single-host               # single-host | multi-host
+
+orderer:
+  org_name: NetworkAuthority      # ordering-service organisation
+  count: 1                        # Raft consenters: 1, 3 or 5
+  hosts: [localhost]              # multi-host: one address per orderer (reused if shorter)
+
+# Each organisation runs a Drunix peer group. Scale each role on its own:
+#   committing  CP   commits blocks, owns the org's state DB (YugabyteDB) + KeyDB
+#   lite        LP   endorses / installs chaincode; add more under heavy tx load
+#   vscc        VSCC validation service; add more for validation throughput
+organizations:
+  - name: RegulatoryAuthority
+    host: localhost               # multi-host: reachable address of this org's server
+    peers: { committing: 1, lite: 1, vscc: 1 }
+  - name: ApproverAuthority
+    host: localhost
+    peers: { committing: 1, lite: 1, vscc: 1 }
+
+# Every channel has its own member orgs, policy and batching. An org entry can
+# be a plain name or {name, lite, committing} to join only a subset of its peers.
+channels:
+  - name: mychannel
+    organizations: [RegulatoryAuthority, ApproverAuthority]
+    endorsement_policy: MAJORITY  # MAJORITY | ANY | ALL
+    batch:
+      timeout: 2s
+      max_message_count: 10
+      absolute_max_bytes: 99 MB
+      preferred_max_bytes: 512 KB
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  grafana_port: 3000
+
+images:
+  peer: npcioss/drunix-peer:1.0.0
+  vscc: npcioss/drunix-vscc:1.0.0
+  orderer: npcioss/drunix-orderer:1.0.0
+  ca: hyperledger/fabric-ca:1.5.22
+  yugabyte: yugabytedb/yugabyte:2025.2.0.0-b131
+  keydb: eqalpha/keydb:latest
+  prometheus: prom/prometheus:latest
+  grafana: grafana/grafana:latest
+
+logging:
+  level: INFO
+  max_size: 50m
+  max_files: 5
