@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drunix Network Console</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside id="nav">
+    <div class="brand"><span class="logo">D</span><div><b>Drunix</b><small>Network Console</small></div></div>
+    <nav id="menu" aria-label="Main"></nav>
+    <div class="side-foot">
+      <div id="netname"></div>
+      <div class="who"><span id="whoami"></span><button id="logout" class="ghost sm" title="Sign out">Sign out</button></div>
+      <div id="runstate" class="pill idle">idle</div>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <h1 id="title"></h1>
+        <p id="subtitle" class="muted"></p>
+      </div>
+    </header>
+    <section id="view" aria-live="polite"></section>
+
+    <div id="console" class="collapsed">
+      <div id="console-bar">
+        <span id="console-state" class="dot"></span>
+        <span id="console-cmd">Console</span>
+        <span class="spacer"></span>
+        <button id="console-copy" class="ghost sm" title="Copy output">Copy</button>
+        <button id="console-clear" class="ghost sm" title="Clear output">Clear</button>
+        <button id="console-size" class="ghost sm" title="Taller / shorter">Resize</button>
+        <button id="console-toggle" class="ghost sm">Show</button>
+      </div>
+      <pre id="console-out"></pre>
+    </div>
+  </main>
+
+  <dialog id="dlg">
+    <form method="dialog">
+      <h3 id="dlg-title"></h3>
+      <p id="dlg-msg" class="muted"></p>
+      <div id="dlg-body"></div>
+      <div class="row end">
+        <button value="cancel" class="ghost">Cancel</button>
+        <button value="ok" id="dlg-ok" class="primary">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
