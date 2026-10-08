@@ -1,0 +1,14 @@
+# local network definition and everything generated from it
+network.yaml
+generated/
+organizations/
+channel-artifacts/
+dist/
+
+# secrets — never commit
+secrets/
+*.env
+!*.env.example
+
+# console audit log
+logs/
