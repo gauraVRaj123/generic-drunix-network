@@ -12,3 +12,7 @@ secrets/
 
 # console audit log
 logs/
+
+# Python cache files
+__pycache__/
+*.py[cod]
