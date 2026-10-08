@@ -1,0 +1,25 @@
+{# Shared snippets: logging, restart policy, TCP healthcheck, remote host names #}
+{% macro logging() %}
+    logging:
+      driver: json-file
+      options:
+        max-size: "{{ m.logging.max_size }}"
+        max-file: "{{ m.logging.max_files }}"
+{% endmacro %}
+{% macro tcp_health(host, port, start="30s") %}
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/{{ host }}/{{ port }}"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: {{ start }}
+{% endmacro %}
+{% macro extra_hosts(local_addr) %}
+{% set remote = m.extra_hosts.items() | selectattr('1', 'ne', local_addr) | list %}
+{% if remote %}
+    extra_hosts:
+{% for h, a in remote %}
+      - "{{ h }}:{{ a }}"
+{% endfor %}
+{% endif %}
+{% endmacro %}
